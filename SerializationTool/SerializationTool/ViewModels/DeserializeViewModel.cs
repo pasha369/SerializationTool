@@ -57,12 +57,9 @@ namespace SerializationTool.ViewModels
             get { return _treeViewItemModels; }
         }
 
-        public DeserializeViewModel()
+        public DeserializeViewModel(SerializeClientWrapper serializeClientWrapper)
         {
-            var serializer = new BinarySerializeClient();
-            _serializeClient = new SerializeClientWrapper();
-            _serializeClient.SerializeClient = serializer;
-            _serializeClient.FileWriter = new FileWriter();
+            _serializeClient = serializeClientWrapper;
 
             _treeViewItemModels = new ObservableCollection<TreeViewItemModel>();
             _treeViewItemModels.CollectionChanged += TreeViewItemModels_CollectionChanged;

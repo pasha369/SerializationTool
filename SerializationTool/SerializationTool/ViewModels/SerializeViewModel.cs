@@ -5,8 +5,6 @@ using System.Linq;
 using System.Windows.Input;
 using Microsoft.Win32;
 using SerializationClient;
-using SerializationClient.Core.FIleWriter;
-using SerializationClient.Core.SerializeClients;
 using SerializationTool.Commands;
 using SerializationTool.Core;
 using SerializationTool.Models;
@@ -23,6 +21,24 @@ namespace SerializationTool.ViewModels
 
         private TreeViewItemModel _selectedItem;
 
+        private ObservableCollection<TreeViewItemModel> _treeItems;
+        private SerializeClientWrapper _serializeClientWrapper;
+
+
+        public SerializeViewModel(SerializeClientWrapper serializeClientWrapper)
+        {
+            _serializeClientWrapper = serializeClientWrapper;
+
+            _treeItems = new ObservableCollection<TreeViewItemModel>();
+            TreeItems.CollectionChanged += ExplorelItemList_CollectionChanged;
+            InitItemList();
+        }
+
+        public ObservableCollection<TreeViewItemModel> TreeItems
+        {
+            get { return _treeItems; }
+        }
+
         public TreeViewItemModel SelectedItem
         {
             get { return _selectedItem; }
@@ -30,65 +46,6 @@ namespace SerializationTool.ViewModels
             {
                 _selectedItem = value;
                 OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<TreeViewItemModel> _treeItems;
-
-        public ObservableCollection<TreeViewItemModel> TreeItems
-        {
-            get { return _treeItems; }
-        }
-
-        private void ExplorelItemList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(TreeItems));
-        }
-
-        public SerializeViewModel()
-        {
-            _treeItems = new ObservableCollection<TreeViewItemModel>();
-            TreeItems.CollectionChanged += ExplorelItemList_CollectionChanged;
-            InitItemList();
-        }
-
-        private void InitItemList()
-        {
-            var dir = new DirectoryInfo(@"D:\");
-            var folders = dir
-                .GetDirectories()
-                .Select(x => ExplorerItemExt.ConvertToExplorerItem(x))
-                .ToList();
-           
-            foreach (var folder in folders)
-            {
-                TreeItems.Add(folder);
-            }
-        }
-
-        public ICommand HandleSerializeCommand
-        {
-            get { return new DelegateCommand(SerializeSelectedFolder);}
-        }
-
-        private void SerializeSelectedFolder()
-        {
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.FileName = "Document"; 
-            dlg.DefaultExt = ".bin";
-            dlg.Filter = "Binary file (.bin)|*.bin"; 
-            // Show save file dialog box
-            bool? result = dlg.ShowDialog();
-            // Process save file dialog box results
-            if (result == true)
-            {
-                string filename = dlg.FileName;
-
-                SerializeClientWrapper clientWrapper = new SerializeClientWrapper();
-                clientWrapper.FileWriter = new FileWriter();
-                clientWrapper.SerializeClient = new BinarySerializeClient();
-                clientWrapper.SerializedFilePath = filename;
-                clientWrapper.SerializeFolder(SelectedItem.Path);
             }
         }
 
@@ -101,5 +58,48 @@ namespace SerializationTool.ViewModels
         {
             get { return "../../Resources/Images/zip.png"; }
         }
+
+        private void ExplorelItemList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(TreeItems));
+        }
+
+        public ICommand HandleSerializeCommand
+        {
+            get { return new DelegateCommand(SerializeSelectedFolder);}
+        }
+
+        private async void SerializeSelectedFolder()
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.FileName = "Document"; 
+            dialog.DefaultExt = ".bin";
+            dialog.Filter = "Binary file (.bin)|*.bin"; 
+
+            bool? result = dialog.ShowDialog();
+            
+            if (result == true)
+            {
+                string filename = dialog.FileName;
+
+                _serializeClientWrapper.SerializedFilePath = filename;
+                await _serializeClientWrapper.SerializeFolderAsync(SelectedItem.Path);
+            }
+        }
+
+        private void InitItemList()
+        {
+            var dir = new DirectoryInfo(@"D:\");
+            var folders = dir
+                .GetDirectories()
+                .Select(x => ExplorerItemExt.ConvertToExplorerItem(x))
+                .ToList();
+
+            foreach (var folder in folders)
+            {
+                TreeItems.Add(folder);
+            }
+        }
+
     }
 }

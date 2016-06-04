@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using SerializationClient.Core.FIleWriter;
 using SerializationClient.Core.SerializeClients;
 using SerializationClient.Models;
@@ -35,6 +36,17 @@ namespace SerializationClient
         }
 
         /// <summary>
+        /// Initialize SerializeClientWrapper instance.
+        /// </summary>
+        /// <param name="serializeClient">Serialize client.</param>
+        /// <param name="fileWriter">File writer.</param>
+        public SerializeClientWrapper(ISerializeClient serializeClient, IFileWriter fileWriter)
+        {
+            FileWriter = fileWriter;
+            SerializeClient = serializeClient;
+        }
+
+        /// <summary>
         /// Deserialize file.
         /// </summary>
         /// <param name="filePath">Output file path.</param>
@@ -45,6 +57,15 @@ namespace SerializationClient
             var fullName = FileWriter.WriteFileModel(filePath, file);
 
             return fullName;
+        }
+
+        /// <summary>
+        /// Serialize folder asynchronously.
+        /// </summary>
+        /// <param name="folderPath">Serialize folder path.</param>
+        public async Task SerializeFolderAsync(string folderPath)
+        {
+            SerializeClient.SerializeFolder(folderPath, SerializedFilePath);
         }
 
         /// <summary>
@@ -59,22 +80,17 @@ namespace SerializationClient
         /// <summary>
         /// Deserialize folder.
         /// </summary>
-        /// <param name="folderOutPath">Folder output path.</param>
-        public void DeserializeFolder(string folderOutPath)
-        {
-            var folder = SerializeClient.DeserializeFolder(SerializedFilePath);
-            FileWriter.WriteFolderModel(folder, folderOutPath);
-        }
-
-        /// <summary>
-        /// Deserialize folder.
-        /// </summary>
-        /// <param name="serializedFilePath">Folder output path.</param>
+        /// <param name="serializedFilePath">Serialized file path.</param>
         public FolderModel DeserializeFolderModel(string serializedFilePath)
         {
             return SerializeClient.DeserializeFolder(serializedFilePath);
         }
 
+        /// <summary>
+        /// Save folder.
+        /// </summary>
+        /// <param name="folder">Folder model</param>
+        /// <param name="outputPath">Output path.</param>
         public void SaveFolder(FolderModel folder, string outputPath)
         {
             FileWriter.WriteFolderModel(folder, outputPath);

@@ -14,9 +14,10 @@ namespace SerializationTool.UnitTest
         [TestFixtureSetUp]
         public void TestInitialize()
         {
-            _clientWrapper = new SerializeClientWrapper();
-            _clientWrapper.FileWriter = new FileWriter();
-            _clientWrapper.SerializeClient = new BinarySerializeClient();
+            var fileWriter = new FileWriter();
+            var serializeClient = new BinarySerializeClient();
+            _clientWrapper = new SerializeClientWrapper(serializeClient, fileWriter);
+
             _clientWrapper.SerializedFilePath = @"D:\test2.bin";
         }
 
@@ -65,12 +66,12 @@ namespace SerializationTool.UnitTest
         public void ShouldDeserializeFolderTest()
         {
             // arrange
-            var folderOutPath = @"D:\Sample Pictures\";
+            var folderOutPath = @"D:\";
             var folderPath = @"C:\Users\Public\Pictures\Sample Pictures\";
 
             // act
             _clientWrapper.SerializeFolder(folderPath);
-            _clientWrapper.DeserializeFolder(folderOutPath);
+            _clientWrapper.DeserializeFolderModel(_clientWrapper.SerializedFilePath);
 
             // assert
             Assert.IsTrue(Directory.Exists(folderOutPath));

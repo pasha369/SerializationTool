@@ -10,14 +10,17 @@ namespace SerializationTool
     /// </summary>
     public partial class App : Application
     {
-        private NavigationViewModel _navigationViewModel;
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             AutoMapperConfig.RegisterMappings();
             AutofacConfiguration.Config();
+            
+            var navigayionViewModel = DependencyResolver.Current.Resolve<NavigationViewModel>();
+            var window = new MainWindow(navigayionViewModel);
+            
+            window.Show();
         }
     }
 }

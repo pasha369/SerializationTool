@@ -24,6 +24,11 @@ namespace SerializationTool.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Gets or sets IsRoot
+        /// </summary>
+        public bool IsRoot { get; set; }
+
+        /// <summary>
         /// Gets or sets Path.
         /// </summary>
         public string Path { get; set; }

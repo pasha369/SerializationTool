@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using Autofac;
 using SerializationTool.Commands;
+using SerializationTool.Startup;
 using SerializationTool.ViewModels.Abstract;
 
 namespace SerializationTool.ViewModels
@@ -37,8 +39,8 @@ namespace SerializationTool.ViewModels
         {
             _pageViewModels = new List<IPageViewModel>();
 
-            _pageViewModels.Add(new SerializeViewModel());
-            _pageViewModels.Add(new DeserializeViewModel());
+            _pageViewModels.Add(DependencyResolver.Current.Resolve<SerializeViewModel>());
+            _pageViewModels.Add(DependencyResolver.Current.Resolve<DeserializeViewModel>());
 
             _currentPageViewModel = _pageViewModels.First();
         }

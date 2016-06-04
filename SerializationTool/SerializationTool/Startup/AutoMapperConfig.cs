@@ -9,6 +9,9 @@ namespace SerializationTool.Startup
     /// </summary>
     public static class AutoMapperConfig
     {
+        /// <summary>
+        /// Resgister all mappings.
+        /// </summary>
         public static void RegisterMappings()
         {
             Mapper

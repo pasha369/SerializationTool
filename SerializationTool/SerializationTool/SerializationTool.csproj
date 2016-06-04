@@ -70,6 +70,7 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Startup\AutofacConfiguration.cs" />
     <Compile Include="Startup\AutoMapperConfig.cs" />
+    <Compile Include="Startup\DependencyResolve.cs" />
     <Compile Include="ViewModels\DeserializeViewModel.cs" />
     <Compile Include="Models\TreeViewItemModel.cs" />
     <Compile Include="Core\ExplorerItemExt.cs" />

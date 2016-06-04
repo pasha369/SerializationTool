@@ -8,11 +8,11 @@ namespace SerializationTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(NavigationViewModel navigationViewModel)
         {
             InitializeComponent();
             
-            DataContext = new NavigationViewModel();
+            DataContext = navigationViewModel;
         }
     }
 }
