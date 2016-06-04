@@ -1,0 +1,68 @@
+﻿<Window x:Class="SerializationTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SerializationTool"
+        xmlns:this="clr-namespace:SerializationTool.Models"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviours="clr-namespace:SerializationTool.Behaviours"
+        xmlns:views="clr-namespace:SerializationTool.Views"
+        xmlns:viewModels="clr-namespace:SerializationTool.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:SerializeViewModel}">
+            <views:SerializeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:DeserializeViewModel}">
+            <views:DeserializeView />
+        </DataTemplate>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily"
+            Value="Arial Narrow" />
+            <Setter Property="FontSize"
+            Value="13" />
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="WhiteSmoke">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <DockPanel>
+            <Border DockPanel.Dock="Left"  BorderBrush="Black" BorderThickness="0,0,1,0">
+                <ItemsControl ItemsSource="{Binding PageViewModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Style="{StaticResource ButtonStyle}"
+                                Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding }">
+                                <StackPanel Orientation="Vertical" Width="70">
+                                    <Image Source="{Binding IconPath}" Height="50"/>
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"></TextBlock>
+                                 </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <ContentControl Content="{Binding CurrentPageViewModel}" />
+        </DockPanel>
+    </Grid>
+</Window>
