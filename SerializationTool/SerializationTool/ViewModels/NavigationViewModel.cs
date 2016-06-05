@@ -18,6 +18,9 @@ namespace SerializationTool.ViewModels
         private IPageViewModel _currentPageViewModel;
         private List<IPageViewModel> _pageViewModels;
 
+        /// <summary>
+        /// Initialize NavigationViewModel instance.
+        /// </summary>
         public NavigationViewModel()
         {
             _pageViewModels = new List<IPageViewModel>();
@@ -29,6 +32,9 @@ namespace SerializationTool.ViewModels
             CurrentPageViewModel.IsSelected = true;
         }
 
+        /// <summary>
+        /// Gets or sets CurrentPageViewModel.
+        /// </summary>
         public IPageViewModel CurrentPageViewModel
         {
             get { return _currentPageViewModel; }
@@ -39,12 +45,18 @@ namespace SerializationTool.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets PageViewModels.
+        /// </summary>
         public List<IPageViewModel> PageViewModels
         {
             get { return _pageViewModels; }
             set { _pageViewModels = value; }
         }
 
+        /// <summary>
+        /// Gets or sets ChangePageCommand.
+        /// </summary>
         public ICommand ChangePageCommand
         {
             get
