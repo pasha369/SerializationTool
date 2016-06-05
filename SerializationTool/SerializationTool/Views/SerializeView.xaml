@@ -11,12 +11,27 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TreeView ItemsSource="{Binding TreeItems}">
+        <DockPanel>
+            <TextBlock 
+                    DockPanel.Dock="Left"
+                    Margin="0,0,10,0"
+                    Text="Choose local disk:"/>
+            <ComboBox DockPanel.Dock="Right" 
+                      ItemsSource="{Binding LogicalDrives}"
+                      SelectedItem="{Binding SelectedLogicalDrive}"/>
+        </DockPanel>
+
+        <TreeView Grid.Row="1" ItemsSource="{Binding TreeItems}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
             <i:Interaction.Behaviors>
                 <behaviours:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
             </i:Interaction.Behaviors>
@@ -29,6 +44,6 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <Button Grid.Row="1" Command="{Binding HandleSerializeCommand}">serialize</Button>
+        <Button Grid.Row="2" Command="{Binding HandleSerializeCommand}">serialize</Button>
     </Grid>
 </UserControl>

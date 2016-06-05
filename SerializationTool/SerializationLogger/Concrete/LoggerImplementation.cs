@@ -17,7 +17,7 @@ namespace SerializationLogger.Concrete
 
         public LoggerImplementation(string name)
         {
-            this._name = name;
+            _log = LogManager.GetLogger(name);
         }
 
         public void Debug(object message)

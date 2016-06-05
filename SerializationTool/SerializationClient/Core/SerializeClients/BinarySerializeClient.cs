@@ -54,6 +54,7 @@ namespace SerializationClient.Core.SerializeClients
         public FolderModel DeserializeFolder(string serializedFilePath)
         {
             FolderModel folder;
+
             using (Stream inStream = new FileStream(serializedFilePath,
                                                     FileMode.Open,
                                                     FileAccess.Read,

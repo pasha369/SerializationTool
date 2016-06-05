@@ -19,7 +19,7 @@ namespace SerializationClient
         /// <summary>
         /// Gets or sets file writer.
         /// </summary>
-        public IFileWriter FileWriter { get; set; }
+        public IFolderCreator FolderCreator { get; set; }
 
         /// <summary>
         /// Gets or sets SerializedFilePath.
@@ -39,10 +39,10 @@ namespace SerializationClient
         /// Initialize SerializeClientWrapper instance.
         /// </summary>
         /// <param name="serializeClient">Serialize client.</param>
-        /// <param name="fileWriter">File writer.</param>
-        public SerializeClientWrapper(ISerializeClient serializeClient, IFileWriter fileWriter)
+        /// <param name="folderCreator">File writer.</param>
+        public SerializeClientWrapper(ISerializeClient serializeClient, IFolderCreator folderCreator)
         {
-            FileWriter = fileWriter;
+            FolderCreator = folderCreator;
             SerializeClient = serializeClient;
         }
 
@@ -54,7 +54,7 @@ namespace SerializationClient
         public string DeserializeFile(string filePath)
         {
             var file = SerializeClient.DeserializeFile(SerializedFilePath);
-            var fullName = FileWriter.WriteFileModel(filePath, file);
+            var fullName = FolderCreator.WriteFileModel(filePath, file);
 
             return fullName;
         }
@@ -93,7 +93,7 @@ namespace SerializationClient
         /// <param name="outputPath">Output path.</param>
         public void SaveFolder(FolderModel folder, string outputPath)
         {
-            FileWriter.WriteFolderModel(folder, outputPath);
+            FolderCreator.WriteFolderModel(folder, outputPath);
         }
     }
 }

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using AutoMapper;
 using SerializationClient;
-using SerializationClient.Core.FIleWriter;
-using SerializationClient.Core.SerializeClients;
 using SerializationClient.Models;
+using SerializationLogger.Abstract;
 using SerializationTool.Commands;
 using SerializationTool.Models;
 using SerializationTool.ViewModels.Abstract;
@@ -22,64 +20,85 @@ namespace SerializationTool.ViewModels
     public class DeserializeViewModel : Observable, IPageViewModel
     {
         private const string DeserializePageName = "Deserialize";
+        private const string DeserializeIcon = "../../Resources/Images/unzip.png";
 
         private ICommand _openFileCommand;
         private ICommand _handleDeserializeCommand;
 
         private SerializeClientWrapper _serializeClient;
         private ObservableCollection<TreeViewItemModel> _treeViewItemModels;
-        private string _outputPath;
         private FolderModel _folder;
-        private string _folderName;
+        private string _filename;
+        private ISerializeLogger _logger;
+        private bool _isSelected;
 
-        public string FolderName
+        /// <summary>
+        /// Initialize DeserializeViewModel instance. 
+        /// </summary>
+        /// <param name="serializeClientWrapper">Serialize client.</param>
+        /// <param name="loggerFactory">Logger factory.</param>
+        public DeserializeViewModel(SerializeClientWrapper serializeClientWrapper, ILoggerFactory loggerFactory)
+        {
+            _serializeClient = serializeClientWrapper;
+            _logger = loggerFactory.GetLogger("main");
+
+            _treeViewItemModels = new ObservableCollection<TreeViewItemModel>();
+            _treeViewItemModels.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(TreeViewItemModels));
+        }
+
+        /// <summary>
+        /// Gets or sets Filename.
+        /// </summary>
+        public string Filename
         {
             private set
             {
-                _folderName = value;
+                _filename = value;
                 OnPropertyChanged();
             }
-            get { return _folderName; }
+            get { return _filename; }
         }
 
-        public string OutputPath
-        {
-            get { return _outputPath; }
-            set
-            {
-                _outputPath = value;
-                OnPropertyChanged();
-            }
-        }
-
+        /// <summary>
+        /// Gets TreeViewItemModels.
+        /// </summary>
         public ObservableCollection<TreeViewItemModel> TreeViewItemModels
         {
             get { return _treeViewItemModels; }
         }
 
-        public DeserializeViewModel(SerializeClientWrapper serializeClientWrapper)
-        {
-            _serializeClient = serializeClientWrapper;
-
-            _treeViewItemModels = new ObservableCollection<TreeViewItemModel>();
-            _treeViewItemModels.CollectionChanged += TreeViewItemModels_CollectionChanged;
-        }
-
-        private void TreeViewItemModels_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(TreeViewItemModels));
-        }
-
+        /// <summary>
+        /// Gets page name.
+        /// </summary>
         public string Name
         {
             get { return DeserializePageName; }
         }
 
+        /// <summary>
+        /// Gets IconPath.
+        /// </summary>
         public string IconPath
         {
-            get { return "../../Resources/Images/unzip.png"; }
+            get { return DeserializeIcon; }
         }
 
+        /// <summary>
+        /// Gets or sets IsSelected.
+        /// </summary>
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets HandleDeserializeCommand.
+        /// </summary>
         public ICommand HandleDeserializeCommand
         {
             get
@@ -92,22 +111,9 @@ namespace SerializationTool.ViewModels
             }
         }
 
-        private void HandleDeserialize()
-        {
-            var dialog = new FolderBrowserDialog();
-
-            DialogResult result = dialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                var selectedItem = TreeViewItemModel.GetFirstSelectedItem(TreeViewItemModels.First());
-                if (selectedItem != null)
-                {
-                    var folder = FolderModel.GetFolderModelByGuid(_folder, selectedItem.Guid);
-                    _serializeClient.SaveFolder(folder, dialog.SelectedPath);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Gets OpenFileCommand.
+        /// </summary>
         public ICommand OpenFileCommand
         {
             get
@@ -122,22 +128,58 @@ namespace SerializationTool.ViewModels
             }
         }
 
+        /// <summary>
+        /// Open file using open dialog.
+        /// </summary>
         public void OpeFile()
         {
-            // Create OpenFileDialog 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Binary file (.bin)|*.bin";
-            // Display OpenFileDialog by calling ShowDialog method 
+
             bool? result = dialog.ShowDialog();
+
             if (result == true)
             {
                 string filename = dialog.FileName;
-                _folder = _serializeClient.DeserializeFolderModel(filename);
-                var treeItem = Mapper.Map<TreeViewItemModel>(_folder);
-                FolderName = filename;
+                try
+                {
+                    _folder = _serializeClient.DeserializeFolderModel(filename);
+                    var treeItem = Mapper.Map<TreeViewItemModel>(_folder);
+                    Filename = filename;
 
-                TreeViewItemModels.Clear();
-                TreeViewItemModels.Add(treeItem);
+                    TreeViewItemModels.Clear();
+                    TreeViewItemModels.Add(treeItem);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
+                }
+            }
+        }
+
+        private void HandleDeserialize()
+        {
+            var dialog = new FolderBrowserDialog();
+
+            try
+            {
+                DialogResult result = dialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    var rootTreeItem = TreeViewItemModels.First();
+                    var selectedItem = TreeViewItemModel.GetSelectedItem(rootTreeItem);
+
+                    if (selectedItem != null)
+                    {
+
+                        var folder = FolderModel.GetFolderModelByGuid(_folder, selectedItem.Guid);
+                        _serializeClient.SaveFolder(folder, dialog.SelectedPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
             }
         }
     }

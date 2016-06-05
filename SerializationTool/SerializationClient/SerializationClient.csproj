@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\FIleWriter\FileWriter.cs" />
-    <Compile Include="Core\FIleWriter\IFileWriter.cs" />
+    <Compile Include="Core\FIleWriter\FolderCreator.cs" />
+    <Compile Include="Core\FIleWriter\IFolderCreator.cs" />
     <Compile Include="Extension\DirectoryExt.cs" />
     <Compile Include="Extension\FileExt.cs" />
     <Compile Include="Models\FileModel.cs" />

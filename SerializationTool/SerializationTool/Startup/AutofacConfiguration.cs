@@ -2,6 +2,8 @@
 using SerializationClient;
 using SerializationClient.Core.FIleWriter;
 using SerializationClient.Core.SerializeClients;
+using SerializationLogger.Abstract;
+using SerializationLogger.Concrete;
 using SerializationTool.ViewModels;
 
 namespace SerializationTool.Startup
@@ -20,7 +22,8 @@ namespace SerializationTool.Startup
             var builder = new ContainerBuilder();
 
             builder.RegisterType<BinarySerializeClient>().As<ISerializeClient>();
-            builder.RegisterType<FileWriter>().As<IFileWriter>();
+            builder.RegisterType<FolderCreator>().As<IFolderCreator>();
+            builder.RegisterType<LoggerFactory>().As<ILoggerFactory>();
 
             builder.RegisterType<SerializeClientWrapper>().AsSelf();
             builder.RegisterType<NavigationViewModel>().AsSelf();

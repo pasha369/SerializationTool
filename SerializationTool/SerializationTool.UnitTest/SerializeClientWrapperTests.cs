@@ -14,7 +14,7 @@ namespace SerializationTool.UnitTest
         [TestFixtureSetUp]
         public void TestInitialize()
         {
-            var fileWriter = new FileWriter();
+            var fileWriter = new FolderCreator();
             var serializeClient = new BinarySerializeClient();
             _clientWrapper = new SerializeClientWrapper(serializeClient, fileWriter);
 

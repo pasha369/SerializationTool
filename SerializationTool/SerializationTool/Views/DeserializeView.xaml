@@ -44,7 +44,7 @@
 
         <Grid>
             <TextBlock HorizontalAlignment="Left" Text="Selected file:"/>
-            <TextBlock HorizontalAlignment="Center"  Text="{Binding FolderName}"/>
+            <TextBlock HorizontalAlignment="Center"  Text="{Binding Filename}"/>
 
             <Button HorizontalAlignment="Right"
                 Command="{Binding OpenFileCommand}"
@@ -64,7 +64,8 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type this:TreeViewItemModel}" ItemsSource="{Binding ChildItems}">
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox
+                        <RadioButton
+                              GroupName="FolderGroup"  
                               Focusable="False" 
                               Margin="0, 8, 5, 0"
                               IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" 

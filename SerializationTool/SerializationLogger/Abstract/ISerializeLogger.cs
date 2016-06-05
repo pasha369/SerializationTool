@@ -1,6 +1,6 @@
 ﻿namespace SerializationLogger.Abstract
 {
-    public interface ISerializeLogger
+    public interface ISerializeLogger : ILoggerMethods
     {
     }
 }

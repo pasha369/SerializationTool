@@ -16,6 +16,18 @@ namespace SerializationTool.ViewModels
         private ICommand _changePageCommand;
 
         private IPageViewModel _currentPageViewModel;
+        private List<IPageViewModel> _pageViewModels;
+
+        public NavigationViewModel()
+        {
+            _pageViewModels = new List<IPageViewModel>();
+
+            _pageViewModels.Add(DependencyResolver.Current.Resolve<SerializeViewModel>());
+            _pageViewModels.Add(DependencyResolver.Current.Resolve<DeserializeViewModel>());
+            
+            _currentPageViewModel = _pageViewModels.First();
+            CurrentPageViewModel.IsSelected = true;
+        }
 
         public IPageViewModel CurrentPageViewModel
         {
@@ -33,18 +45,6 @@ namespace SerializationTool.ViewModels
             set { _pageViewModels = value; }
         }
 
-        private List<IPageViewModel> _pageViewModels;
-
-        public NavigationViewModel()
-        {
-            _pageViewModels = new List<IPageViewModel>();
-
-            _pageViewModels.Add(DependencyResolver.Current.Resolve<SerializeViewModel>());
-            _pageViewModels.Add(DependencyResolver.Current.Resolve<DeserializeViewModel>());
-
-            _currentPageViewModel = _pageViewModels.First();
-        }
-
         public ICommand ChangePageCommand
         {
             get
@@ -52,7 +52,7 @@ namespace SerializationTool.ViewModels
                 if (_changePageCommand == null)
                 {
                     _changePageCommand = new RelayCommand(
-                        p => ChangeViewModel((IPageViewModel)p),
+                        p => ChangeCurrentPage((IPageViewModel)p),
                         p => p is IPageViewModel);
                 }
 
@@ -60,9 +60,14 @@ namespace SerializationTool.ViewModels
             }
         }
 
-        private void ChangeViewModel(IPageViewModel pageViewModel)
+        private void ChangeCurrentPage(IPageViewModel pageViewModel)
         {
+            if (CurrentPageViewModel != null)
+            {
+                CurrentPageViewModel.IsSelected = false;
+            }
             CurrentPageViewModel = PageViewModels.Single(vm => vm == pageViewModel);
+            CurrentPageViewModel.IsSelected = true;
         }
     }
 }

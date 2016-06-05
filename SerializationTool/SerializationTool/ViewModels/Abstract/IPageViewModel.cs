@@ -14,5 +14,10 @@
         /// Gets or sets icon path.
         /// </summary>
         string IconPath { get;  }
+
+        /// <summary>
+        /// Gets or sets is selected.
+        /// </summary>
+        bool IsSelected { get; set; }
     }
 }

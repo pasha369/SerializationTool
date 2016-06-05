@@ -10,7 +10,7 @@
         xmlns:views="clr-namespace:SerializationTool.Views"
         xmlns:viewModels="clr-namespace:SerializationTool.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Serialization tool" Height="350" Width="525">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:SerializeViewModel}">
@@ -19,26 +19,27 @@
         <DataTemplate DataType="{x:Type viewModels:DeserializeViewModel}">
             <views:DeserializeView />
         </DataTemplate>
+
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
+            <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="0,0,0,1" CornerRadius="0">
+                <ContentPresenter RecognizesAccessKey="True"></ContentPresenter>
+            </Border>
+        </ControlTemplate>
+        
         <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="FontFamily"
-            Value="Arial Narrow" />
-            <Setter Property="FontSize"
-            Value="13" />
-            <Setter Property="Margin" Value="1"/>
+            <Setter Property="FontFamily" Value="Arial Narrow" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Foreground" Value="Gray"/>
             <Setter Property="BorderThickness" Value="5"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Border" Background="WhiteSmoke">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+           
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -48,14 +49,14 @@
                 <ItemsControl ItemsSource="{Binding PageViewModels}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button
+                            <Button Template="{StaticResource ButtonTemplate}"
                                 Style="{StaticResource ButtonStyle}"
                                 Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                 CommandParameter="{Binding }">
                                 <StackPanel Orientation="Vertical" Width="70">
                                     <Image Source="{Binding IconPath}" Height="50"/>
                                     <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"></TextBlock>
-                                 </StackPanel>
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

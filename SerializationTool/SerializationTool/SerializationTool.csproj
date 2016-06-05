@@ -43,6 +43,10 @@
       <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.4\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -66,14 +70,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviours\BindableSelectedItemBehavior.cs" />
-    <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Startup\AutofacConfiguration.cs" />
     <Compile Include="Startup\AutoMapperConfig.cs" />
     <Compile Include="Startup\DependencyResolve.cs" />
     <Compile Include="ViewModels\DeserializeViewModel.cs" />
     <Compile Include="Models\TreeViewItemModel.cs" />
-    <Compile Include="Core\ExplorerItemExt.cs" />
+    <Compile Include="Core\TreeViewItemModelExt.cs" />
     <Compile Include="ViewModels\Abstract\IPageViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModels\Abstract\Observable.cs" />
@@ -123,6 +126,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -141,6 +150,10 @@
     <ProjectReference Include="..\SerializationClient\SerializationClient.csproj">
       <Project>{4b5760b7-4c44-4f5b-b3a8-bdff87be959f}</Project>
       <Name>SerializationClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SerializationLogger\SerializationLogger.csproj">
+      <Project>{2538cbfe-c2b5-4447-ac21-a19d336a26f7}</Project>
+      <Name>SerializationLogger</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@ using SerializationLogger.Abstract;
 
 namespace SerializationLogger.Concrete
 {
-    public class LoggerFactory
+    public class LoggerFactory : ILoggerFactory
     {
         private readonly Dictionary<string, LoggerImplementation> _logs;
 
