@@ -10,6 +10,8 @@ namespace SerializationTool.UnitTest
     public class SerializeClientWrapperTests
     {
         private SerializeClientWrapper _clientWrapper;
+        private string _testFolderPath;
+        private string _filename;
 
         [TestFixtureSetUp]
         public void TestInitialize()
@@ -19,13 +21,34 @@ namespace SerializationTool.UnitTest
             _clientWrapper = new SerializeClientWrapper(serializeClient, fileWriter);
 
             _clientWrapper.SerializedFilePath = @"D:\test2.bin";
+            _testFolderPath = @"D:\Test";
+            _filename = Path.Combine(_testFolderPath, "test.txt");
+
+            CreateFolder(_testFolderPath);
+            CreateFile(_filename);
+        }
+
+        [TestFixtureTearDown]
+        public void TestDestroy()
+        {
+            DirectoryInfo di = new DirectoryInfo(_testFolderPath);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
         }
 
         [Test]
         public void ShouldSerializeFileTest()
         {
             // arrange
-            var file = new FileInfo(@"C:\Users\pasha\Pictures\trir_by_location.png");
+            var file = new FileInfo(_filename);
 
             // act
             _clientWrapper.SerializeFile(file);
@@ -38,12 +61,12 @@ namespace SerializationTool.UnitTest
         public void ShouldDeserializeFileTest()
         {
             // arrange
-            var filePath = @"D:\";
-            var file = new FileInfo(@"C:\Users\pasha\Pictures\trir_by_location.png");
+            var outPath = @"D:\";
+            var file = new FileInfo(_filename);
 
             // act
             _clientWrapper.SerializeFile(file);
-            var fullName = _clientWrapper.DeserializeFile(filePath);
+            var fullName = _clientWrapper.DeserializeFile(outPath);
 
             // assert
             Assert.IsTrue(File.Exists(fullName));
@@ -53,10 +76,9 @@ namespace SerializationTool.UnitTest
         public void ShouldSerializeFolderTest()
         {
             // arrange
-            var folderPath = @"C:\Users\Public\Pictures\Sample Pictures\";
             
             // act
-            _clientWrapper.SerializeFolder(folderPath);
+            _clientWrapper.SerializeFolder(_testFolderPath);
 
             // assert
             Assert.IsTrue(File.Exists(_clientWrapper.SerializedFilePath));
@@ -67,15 +89,33 @@ namespace SerializationTool.UnitTest
         {
             // arrange
             var folderOutPath = @"D:\";
-            var folderPath = @"C:\Users\Public\Pictures\Sample Pictures\";
+            var deserializeFolder = Path.Combine(@"D:\", _testFolderPath);
 
             // act
-            _clientWrapper.SerializeFolder(folderPath);
+            _clientWrapper.SerializeFolder(_testFolderPath);
             _clientWrapper.DeserializeFolderModel(_clientWrapper.SerializedFilePath);
 
             // assert
-            Assert.IsTrue(Directory.Exists(folderOutPath));
+            Assert.IsTrue(Directory.Exists(deserializeFolder));
             Assert.IsNotEmpty(Directory.GetDirectories(folderOutPath));
+        }
+
+        private void CreateFolder(string folderPath)
+        {
+            var subFolder = folderPath;
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+        }
+
+        private void CreateFile(string filename)
+        {
+            using (TextWriter tw = new StreamWriter(filename))
+            {
+                tw.WriteLine("The line!");
+                tw.Close();
+            }
         }
     }
 }
